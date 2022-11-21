@@ -1,19 +1,18 @@
-const express = require("express");
-const app = express();
-const cors = require("cors");
-const { resolve } = require("path");
-// Replace if using a different env file or config
-const env = require("dotenv").config({ path: ".env" });
-
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY, {});
-app.use(express.json());
-app.use(cors({ origin: "http://localhost:3000" }));
-
-app.get("/config", async (req, res) => {
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+/** 
+ * pega aca el handler de node...
+ * 
+ * app.get("/config", async (req, res) => {
   res.send({
     publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
   });
 });
+
+insomnia al 
+localhost:3000/api/config
+y
+localhost:3000/api/create-payment-intent
+
 
 app.post("/create-payment-intent", async (req, res) => {
   // console.log(req.body.amount)
@@ -37,7 +36,29 @@ app.post("/create-payment-intent", async (req, res) => {
     });
   }
 });
-
-app.listen(5252, () =>
-  console.log(`Server escuchando en http://localhost:5252`)
-);
+  */
+export default async function handler(req, res) {
+  if (req.method === "POST") {
+    try {
+      // Crear sesiones de pago a partir de los parámetros del cuerpo.
+      const session = await stripe.checkout.sessions.create({
+        line_items: [
+          {
+            // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+            price: "{{PRICE_ID}}",
+            quantity: 1,
+          },
+        ],
+        mode: "payment",
+        success_url: `${req.headers.origin}/?success=true`,
+        cancel_url: `${req.headers.origin}/?canceled=true`,
+      });
+      res.redirect(303, session.url);
+    } catch (err) {
+      res.status(err.statusCode || 500).json(err.message);
+    }
+  } else {
+    res.setHeader("Allow", "POST");
+    res.status(405).end("Method Not Allowed");
+  }
+}

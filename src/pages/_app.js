@@ -17,8 +17,8 @@ function MyApp({ Component, pageProps }) {
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       // console.log(user)
-      if (!user) {
-        router.push("/logIn");
+      if (!user && !router.components.pathname === '/signin') {
+        router.push("/login");
       }
     });
   }, []);

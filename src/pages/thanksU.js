@@ -1,12 +1,14 @@
 import React from 'react';
+import { useRouter } from "next/router";
 
 
 
-function ThanksU() {
+export default function thanksu() {
+    const router = useRouter();
     return (
         <div className='min-h-screen my-8 bg-principal'>
             <div className='p-10 '>
-                <button onClick={() => {  }} className="btn glass">Back To Home</button>
+                <button onClick={() => {router.push("/home");}} className="btn glass">Back To Home</button>
                 <div className="hero">
                     <div className="hero-content text-center">
                         <div className="text-light max-w-md">
@@ -23,5 +25,3 @@ function ThanksU() {
         </div>
     )
 }
-
-export default ThanksU

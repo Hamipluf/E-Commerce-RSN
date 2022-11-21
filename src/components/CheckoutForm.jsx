@@ -26,7 +26,7 @@ export default function CheckoutForm() {
       elements,
       confirmParams: {
         //Pagina de confirmacion del pago
-        return_url: `${window.location.origin}/ThanksU`,
+        return_url: `${window.location.origin}/thanksu`,
       },
     });
 

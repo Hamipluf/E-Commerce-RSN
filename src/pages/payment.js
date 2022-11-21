@@ -31,7 +31,7 @@ function Payment() {
   useEffect(() => {
     axios
       .post(
-        "http://localhost:5252/create-payment-intent", //clave privada mando por metodo post
+        "/api/create-payment-intent", //clave privada mando por metodo post
         { amount: total },
         {
           headers: { "Content-Type": "application/json" },
@@ -48,7 +48,7 @@ function Payment() {
 
     axios
       .get(
-        "http://localhost:5252/config", //clave publica obtengo por metodo get
+        "/api/config", //clave publica obtengo por metodo get
         {
           headers: { "Content-Type": "application/json" },
         }

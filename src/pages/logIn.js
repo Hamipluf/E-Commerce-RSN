@@ -1,11 +1,13 @@
 import { useRef, useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { auth } from "../feature/firebase-config";
-import { login, selectUser } from "../feature/user/userSlice";
+import { login } from "../feature/user/userSlice";
+
+var flag = false; 
 
 export default function LogIn() {
   const router = useRouter();
@@ -18,7 +20,8 @@ export default function LogIn() {
   useEffect(() => {
     auth.onAuthStateChanged((userAuth) => {
       // console.log(userAuth)
-      if (userAuth) {
+      if (userAuth && !flag) {
+        flag = true;
         dispatch(
           login({
             uid: userAuth.uid,
@@ -38,9 +41,9 @@ export default function LogIn() {
         emailRef.current.value,
         passwordRef.current.value
       );
-      // console.log(sigin);
+      // console.log(logIn);
       console.log("Se autentico correctamente");
-      navigate("/home");
+      router.push("/home");
     } catch (err) {
       // console.log(err.message);
       setError(err.message);

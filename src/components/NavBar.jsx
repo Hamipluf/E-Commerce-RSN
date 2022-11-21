@@ -6,6 +6,7 @@ import { auth } from "../feature/firebase-config";
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import phone from "../../public/smartphone.png";
 
@@ -13,16 +14,18 @@ export default function NavBar() {
   const product = useSelector(selectProducto);
   const total = useSelector(selectTotal);
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const exit = () => {
     auth.signOut();
-    window.location.reload(true);
     const unsuscribe = auth.onAuthStateChanged((userAuth) => {
-      console.log(userAuth);
+      // console.log(userAuth);
       if (userAuth) {
         //Logged out
         dispatch(logout());
+  
       }
+      router.push("/login");
     });
     return unsuscribe; //equivale a la funcion de limpieza
   };
@@ -87,9 +90,9 @@ export default function NavBar() {
                   <div className="divider h-1 bg-obscure"></div>
                   <span className="text-info">Subtotal:{total}</span>
                   <div className="card-actions">
-                    <button className="btn btn-primary btn-block">
-                      <Link href="/cart">View cart</Link>
-                    </button>
+                    <Link className="btn btn-primary btn-block" href="/cart">
+                      <button>View cart</button>
+                    </Link>
                   </div>
                 </div>
               </div>
