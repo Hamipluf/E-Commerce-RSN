@@ -79,7 +79,7 @@ function Profile() {
         <div className="z-0 card card-compact m-5 w-11/12 text-light bg-dark shadow-xl desktop:h-11/12 h-11/12 self-start">
           <div className="card-body z-0">
             <h2 className="text-sm desktop:text-2xl font-medium">E-mail:</h2>
-            <span className="text-xs desktop:text-xl">{user.email}</span>
+            <span className="text-xs desktop:text-xl">user.email</span>
             <div className="divider m-0" />
             <form className="">
               <label className="desktop:text-xl">Name: </label>

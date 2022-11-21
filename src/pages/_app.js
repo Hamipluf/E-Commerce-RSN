@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 
-import initAuth from "../../initAuth"; //configuracion next auth firebase
 
 import "../styles/index.css";
 
@@ -11,7 +10,6 @@ import { Provider } from "react-redux";
 import { store } from "../app/store";
 import { auth } from "../feature/firebase-config";
 
-initAuth(); //inicializo next auth firebase
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
