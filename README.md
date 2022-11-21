@@ -1,11 +1,12 @@
-# Client Side
+# E-Commerce Demo
 
-## How to run locally
+## It is a basic example of an E-Commerce, which connects to the backend with the stripe api, which allows me to receive payments with cards and more than 25 payment methods.
 
-This is the React client for the sample and runs independently of the server.
-Running a backend server is a requirement and a dependency for this front-end to work.
+### The app is built with create-next-app, firebase auth, axios, express, stripe, tailwind and react-router-dom.
 
-To run the React client locally:
+![](./public/WhatsApp%20Image%202022-11-17%20at%207.38.45%20PM.jpeg)
+
+Follow the instructions in folder api README for the  `server`.
 
 1. Install dependencies
 
