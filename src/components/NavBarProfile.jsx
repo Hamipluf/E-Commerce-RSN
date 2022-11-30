@@ -1,26 +1,27 @@
 import { useDispatch } from "react-redux";
 
+import { getAuth, signOut } from "firebase/auth";
+
 import Link from "next/link";
 import Image from "next/image";
 
-import { auth } from "../feature/firebase-config";
 import { logout } from "../feature/user/userSlice";
 
 import phone from "../../public/smartphone.png";
 
 export default function NavBarProfile() {
   const dispatch = useDispatch();
+  const auth = getAuth();
 
-  const exit = () => {
-    auth.signOut();
-    window.location.reload(true);
-    const unsuscribe = auth.onAuthStateChanged((userAuth) => {
-      if (userAuth) {
-        //Logged out
+  const handleLogOut = () => {
+    signOut(auth)
+      .then(() => {
+        // Sign-out successful.
         dispatch(logout());
-      }
-    });
-    return unsuscribe; //equivale a la funcion de limpieza
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
   return (
     <>
@@ -86,7 +87,7 @@ export default function NavBarProfile() {
               </Link>
             </li>
             <li>
-              <button onClick={exit}>Log Out</button>
+              <button onClick={handleLogOut}>Log Out</button>
             </li>
           </ul>
         </div>

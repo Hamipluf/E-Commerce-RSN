@@ -1,68 +1,46 @@
 import { useRef, useState } from "react";
 
-import { useRouter } from "next/router";
-
-import { auth } from "../feature/firebase-config";
-import { login } from "../feature/user/userSlice";
-
 import { useDispatch } from "react-redux";
 
-import Link from "next/link";
+import { AuthAction, withAuthUser } from "next-firebase-auth";
+
+import { useRouter } from "next/router";
+
+import { login } from "../feature/user/userSlice";
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+
+import MyLoader from "../components/MyLoader";
 
 function SignIn() {
-  const emailRef = useRef(null);
-  const passwordRef = useRef(null);
+  const emailRef = useRef();
+  const passwordRef = useRef();
   const dispatch = useDispatch();
   const [error, setError] = useState();
-  const router = useRouter();
+  const auth = getAuth();
 
   // Registrando Usuario
-  const register = async (e) => {
+  const handleRegister = (e) => {
     e.preventDefault();
-    setError(); // borro el mensaje de error en reintento
-
-    await auth
-      .createUserWithEmailAndPassword(
-        emailRef.current.value,
-        passwordRef.current.value // firbase te pide que sea mas de 6 caracteres
-      )
-      .then(
-        (userCredential) => {
-          // Signed in
-          const user = userCredential.user;
-          if (user !== null) {
-            // The user object has basic properties such as display name, email, etc.
-            const displayName = user.displayName;
-            const email = user.email;
-            const photoURL = user.photoURL;
-            const emailVerified = user.emailVerified;
-            // The user's ID, unique to the Firebase project. Do NOT use
-            // this value to authenticate with your backend server, if
-            // you have one. Use User.getToken() instead.
-            const uid = user.uid;
-            dispatch(login(user));
-            // aca iria el route forward ....
-            // ...
-            router.push("/home");
-          }
-        },
-        ({ code, message }) => {
-            console.log(code);
-            if (code === "auth/email-already-in-use") {
-                alert("Email already in use");
-            }
-            console.log(message);
-            // rechazado el signin por alguna razon...
-            // debuguear razones
-            setError(code); 
-        } //aca esta cayendo el error
-      )
+    createUserWithEmailAndPassword(
+      auth,
+      emailRef.current.value,
+      passwordRef.current.value
+    )
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        dispatch(
+          login({
+            uid: user.uid,
+            email: user.email,
+          })
+        );
+        setError("") //borro mensaje de error
+      })
       .catch((error) => {
-        //cuando no responde la api 500
         const errorCode = error.code;
         const errorMessage = error.message;
-        setError(errorCode);
-        // .. 
+        setError(errorCode)
       });
   };
 
@@ -112,7 +90,7 @@ function SignIn() {
                 <h2 className="text-error text-lg font-bold">{`${error}`}</h2>
               )}
               <div className="form-control mt-6">
-                <button onClick={register} className="btn btn-accent">
+                <button onClick={handleRegister} className="btn btn-accent">
                   Sign In
                 </button>
               </div>
@@ -124,4 +102,8 @@ function SignIn() {
   );
 }
 
-export default SignIn;
+export default withAuthUser({
+  whenAuthed: AuthAction.REDIRECT_TO_APP,
+  whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
+  LoaderComponent: MyLoader,
+})(SignIn);

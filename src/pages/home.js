@@ -1,12 +1,21 @@
+import {
+  AuthAction,
+  useAuthUser,
+  withAuthUser,
+  withAuthUserTokenSSR,
+} from "next-firebase-auth";
+
 import Product from "../components/Product";
 import NavBar from "../components/NavBar";
 
-import adidas from '../../public/adidas.PNG';
-import cafetera from '../../public/cafetera.PNG';
-import pcgamer from '../../public/pcgamer.PNG';
-import xbox from '../../public/xboc.PNG';
+import adidas from "../../public/adidas.PNG";
+import cafetera from "../../public/cafetera.PNG";
+import pcgamer from "../../public/pcgamer.PNG";
+import xbox from "../../public/xboc.PNG";
+import MyLoader from "../components/MyLoader";
 
-export default function home() {
+const home = () => {
+  const authUser = useAuthUser();
   return (
     <>
       <div className="bg-light">
@@ -43,4 +52,13 @@ export default function home() {
       </div>
     </>
   );
-}
+};
+export const getServerSideProps = withAuthUserTokenSSR({})(() => {
+  return { props: {} };
+});
+
+export default withAuthUser({
+  whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
+  whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
+  LoaderComponent: MyLoader,
+})(home);

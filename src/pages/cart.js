@@ -1,8 +1,7 @@
-import { useState } from "react";
-
 import { useDispatch, useSelector } from "react-redux";
 
 import { useRouter } from "next/router";
+import { AuthAction, withAuthUser } from "next-firebase-auth";
 
 import {
   deleteProduct,
@@ -12,8 +11,9 @@ import {
 
 import Footer from "../components/Footer";
 import NavBar from "../components/NavBar";
+import MyLoader from "../components/MyLoader";
 
-export default function Cart() {
+const Cart = () => {
   const product = useSelector(selectProducto);
   const total = useSelector(selectTotal);
   const dispatch = useDispatch();
@@ -88,4 +88,10 @@ export default function Cart() {
       <Footer />
     </>
   );
-}
+};
+
+export default withAuthUser({
+  whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
+  whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
+  LoaderComponent: MyLoader,
+})(Cart);

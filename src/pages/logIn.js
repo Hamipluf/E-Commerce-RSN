@@ -1,54 +1,45 @@
-import { useRef, useState, useEffect } from "react";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { AuthAction, withAuthUser } from "next-firebase-auth";
+
+import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 
 import Link from "next/link";
-import { useRouter } from "next/router";
 
-import { auth } from "../feature/firebase-config";
 import { login } from "../feature/user/userSlice";
+import MyLoader from '../components/MyLoader';
 
-var flag = false; 
-
-export default function LogIn() {
-  const router = useRouter();
-  const emailRef = useRef(null);
-  const passwordRef = useRef(null);
+const LogIn = () => {
+  const emailRef = useRef();
+  const passwordRef = useRef();
   const dispatch = useDispatch();
   const [error, setError] = useState();
-
-  // Verificando si ya ingreso o si debe ingresar
-  useEffect(() => {
-    auth.onAuthStateChanged((userAuth) => {
-      // console.log(userAuth)
-      if (userAuth && !flag) {
-        flag = true;
+  const auth = getAuth();
+  // loggin
+  const handleLogIn = () => {
+    signInWithEmailAndPassword(
+      auth,
+      emailRef.current.value,
+      passwordRef.current.value
+    )
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
         dispatch(
           login({
-            uid: userAuth.uid,
-            email: userAuth.email,
+            uid: user.uid,
+            email: user.email,
           })
         );
-        router.push("/home");
-      }
-    });
-  }, []);
-
-  // Ingresando al user
-  const logIn = async (e) => {
-    e.preventDefault();
-    try {
-      const sigin = await auth.signInWithEmailAndPassword(
-        emailRef.current.value,
-        passwordRef.current.value
-      );
-      // console.log(logIn);
-      console.log("Se autentico correctamente");
-      router.push("/home");
-    } catch (err) {
-      // console.log(err.message);
-      setError(err.message);
-    }
+        console.log(user);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        setError(errorMessage);
+      });
   };
+
   return (
     <div>
       <div className="hero min-h-screen bg-login">
@@ -94,7 +85,7 @@ export default function LogIn() {
                 )}
               </div>
               <div className="form-control mt-6">
-                <button onClick={logIn} className="btn btn-primary">
+                <button onClick={handleLogIn} className="btn btn-primary">
                   Log in
                 </button>
               </div>
@@ -104,4 +95,11 @@ export default function LogIn() {
       </div>
     </div>
   );
-}
+};
+
+
+export default withAuthUser({
+  whenAuthed: AuthAction.REDIRECT_TO_APP,
+  whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
+  LoaderComponent: MyLoader,
+})(LogIn);

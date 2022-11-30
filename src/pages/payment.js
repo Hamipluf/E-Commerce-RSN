@@ -16,6 +16,8 @@ import CheckoutForm from "../components/CheckoutForm";
 import NavBarProfile from "../components/NavBarProfile";
 import Footer from "../components/Footer";
 import Link from "next/link";
+import { AuthAction, withAuthUser } from "next-firebase-auth";
+import MyLoader from "../components/MyLoader";
 
 function Payment() {
   const [stripePromise, setStripePromise] = useState(null);
@@ -174,4 +176,8 @@ function Payment() {
   );
 }
 
-export default Payment;
+export default withAuthUser({
+  whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
+  whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
+  LoaderComponent: MyLoader,
+})(Payment);

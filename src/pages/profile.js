@@ -4,16 +4,16 @@ import { selectUser } from "../feature/user/userSlice";
 
 import Footer from "../components/Footer";
 import NavBarProfile from "../components/NavBarProfile";
+import MyLoader from "../components/MyLoader";
+import { AuthAction, withAuthUser } from "next-firebase-auth";
 
 function Profile() {
-  const user = useSelector(selectUser);
-//   console.log(user)
-
+  const user = useSelector(selectUser)
+  console.log(user)
   return (
     <>
       <NavBarProfile />
-      <div className="z-0 py-10 grid grid-cols-2 justify-items-center w-full bg-walpaper min-h-screen">
-
+      <div className="z-0 py-10 grid grid-cols-2 justify-items-center w-full bg-light min-h-screen">
         {/* AVATAR */}
         <div className="grid-cols-1 w-11/12 self-start">
           <div className=" rounded-3xl">
@@ -79,7 +79,7 @@ function Profile() {
         <div className="z-0 card card-compact m-5 w-11/12 text-light bg-dark shadow-xl desktop:h-11/12 h-11/12 self-start">
           <div className="card-body z-0">
             <h2 className="text-sm desktop:text-2xl font-medium">E-mail:</h2>
-            <span className="text-xs desktop:text-xl">user.email</span>
+            <span className="text-xs desktop:text-xl">{user.email}</span>
             <div className="divider m-0" />
             <form className="">
               <label className="desktop:text-xl">Name: </label>
@@ -141,4 +141,8 @@ function Profile() {
   );
 }
 
-export default Profile;
+export default withAuthUser({
+  whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
+  whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
+  LoaderComponent: MyLoader,
+})(Profile);

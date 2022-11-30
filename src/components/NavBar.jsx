@@ -2,11 +2,11 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { selectProducto, selectTotal } from "../feature/product/productSlice";
 import { logout } from "../feature/user/userSlice";
-import { auth } from "../feature/firebase-config";
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+
+import { getAuth, signOut } from "firebase/auth";
 
 import phone from "../../public/smartphone.png";
 
@@ -14,21 +14,19 @@ export default function NavBar() {
   const product = useSelector(selectProducto);
   const total = useSelector(selectTotal);
   const dispatch = useDispatch();
-  const router = useRouter();
+  const auth = getAuth();
 
-  const exit = () => {
-    auth.signOut();
-    const unsuscribe = auth.onAuthStateChanged((userAuth) => {
-      // console.log(userAuth);
-      if (userAuth) {
-        //Logged out
+  const handleLogOut = () => {
+    signOut(auth)
+      .then(() => {
+        // Sign-out successful.
         dispatch(logout());
-  
-      }
-      router.push("/login");
-    });
-    return unsuscribe; //equivale a la funcion de limpieza
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
+
   return (
     <>
       <div className="navbar bg-dark">
@@ -101,7 +99,7 @@ export default function NavBar() {
           <div className="dropdown dropdown-end">
             <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
               <div className="w-10 rounded-full">
-                <img src="https://placeimg.com/80/80/people" />
+                <img src="https://us.123rf.com/450wm/tuktukdesign/tuktukdesign1606/tuktukdesign160600119/59070200-icono-de-usuario-hombre-perfil-hombre-de-negocios-avatar-icono-persona-en-la-ilustraci%C3%B3n-vectorial.jpg?ver=6" />
               </div>
             </label>
             <ul
@@ -114,7 +112,7 @@ export default function NavBar() {
                 </Link>
               </li>
               <li>
-                <button onClick={exit}>Logout</button>
+                <button onClick={handleLogOut}>Logout</button>
               </li>
             </ul>
           </div>

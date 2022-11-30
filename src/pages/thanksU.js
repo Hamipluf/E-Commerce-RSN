@@ -1,9 +1,10 @@
 import React from 'react';
 import { useRouter } from "next/router";
+import { AuthAction, withAuthUser } from 'next-firebase-auth';
 
 
 
-export default function thanksu() {
+const ThanksU = () => {
     const router = useRouter();
     return (
         <div className='min-h-screen my-8 bg-principal'>
@@ -25,3 +26,6 @@ export default function thanksu() {
         </div>
     )
 }
+export default withAuthUser({
+    whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
+  })(ThanksU);
